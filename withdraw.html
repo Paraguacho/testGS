@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GSK Health - Retiro</title>
+    <link rel="stylesheet" href="./spa/css/common.css">
+    <link rel="stylesheet" href="./spa/css/pages/withdraw.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="withdraw-page">
+        <header class="hero-header">
+            <div class="hero-header-inner">
+                <button class="back-button" onclick="goBack()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M19 12H5M12 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <h1 class="hero-header-title">Retiro de inversión</h1>
+            </div>
+        </header>
+
+        <main class="page-main">
+            <section class="balance-section">
+                <div class="balance-card">
+                    <span class="balance-title">Saldo disponible</span>
+                    <div class="balance-amount" id="availableBalance">$0</div>
+                </div>
+                <a class="history-text-link" onclick="goToWithdrawRecords()">Ver historial de transacciones</a>
+            </section>
+
+            <section class="amounts-section">
+                <div class="amounts-card">
+                    <div class="section-title">
+                        <h2>Ingresa el monto</h2>
+                        <div class="title-decoration"></div>
+                    </div>
+                    <div class="amount-input-container">
+                        <div class="amount-input-wrapper">
+                            <span class="currency-symbol">$</span>
+                            <input type="number" id="withdrawAmount" class="amount-input-field" placeholder="Ingresa el monto a retirar" min="100" step="1">
+                        </div>
+                        <div class="error-message" id="amountError"></div>
+                    </div>
+
+                    <div id="feeCalculation" style="display: none; margin: 15px 0; padding: 12px; background: rgba(0,0,0,0.03); border: 1px solid rgba(0,0,0,0.08); border-radius: 8px; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #666;">Monto del retiro:</span>
+                            <span style="color: #333; font-weight: 500;" id="feeAmount">$0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #666;">Comisión de servicio (20%):</span>
+                            <span style="color: #ff4444; font-weight: 500;" id="feeCharge">$0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <span style="color: #333; font-weight: 600;">Recibirás:</span>
+                            <span style="color: #22c55e; font-weight: 600; font-size: 16px;" id="feeReceive">$0</span>
+                        </div>
+                    </div>
+
+                    <button class="submit-button" id="submitBtn" onclick="directWithdraw()">
+                        Continuar
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <div class="loading" id="loadingMask">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="investRequiredModal" class="invest-modal" aria-hidden="true">
+        <div class="invest-modal-overlay" onclick="closeInvestRequiredModal()"></div>
+        <div class="invest-modal-box" role="dialog" aria-labelledby="investRequiredModalTitle">
+            <p id="investRequiredModalTitle" class="invest-modal-text">Debes contar con al menos un producto de inversión para poder realizar un retiro.</p>
+            <button type="button" class="invest-modal-btn" onclick="closeInvestRequiredModal()">Entendido</button>
+            <a href="invest.html" class="history-text-link invest-modal-link">Ir a invertir</a>
+        </div>
+    </div>
+    
+    <script src="./spa/js/common.js"></script>
+    <script src="./spa/js/time-utils.js"></script>
+    <script src="./spa/js/device-session-manager.js"></script>
+    <script src="./spa/js/profit-detector.js"></script>
+    <script src="./spa/js/api.js"></script>
+    <script>
+        let userBalance = 0;
+        let canWithdraw = true;
+        let hasInvestment = false;
+        let selectedBankCard = null;
+        let bankCardsList = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!getToken()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            initPage();
+        });
+
+        function initPage() {
+            if (window.unifiedProfitManager) {
+                setTimeout(() => {
+                    window.unifiedProfitManager.smartProfitCheck('page_withdraw');
+                }, 2000);
+            }
+            loadUserBalance();
+            loadBankCards();
+            bindInputValidation();
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden && getToken()) {
+                    loadUserBalance();
+                }
+            });
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('investRequiredModal');
+                    if (modal && modal.classList.contains('show')) {
+                        closeInvestRequiredModal();
+                    }
+                }
+            });
+        }
+
+        function showInvestRequiredModal() {
+            const modal = document.getElementById('investRequiredModal');
+            if (!modal) return;
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeInvestRequiredModal() {
+            const modal = document.getElementById('investRequiredModal');
+            if (!modal) return;
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+        }
+
+        function loadUserBalance() {
+            fetch('/api/withdraw/available-balance', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': getToken()
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.code === 1) {
+                    userBalance = parseFloat(res.data.balance || 0);
+                    canWithdraw = res.data.can_withdraw;
+                    hasInvestment = !!res.data.has_investment;
+                    updateBalanceDisplay();
+                } else {
+                    showToast(res.msg || 'No se pudo obtener el saldo', 'error');
+                }
+            })
+            .catch(err => {
+                showToast('Error de red. Inténtalo más tarde.', 'error');
+            });
+        }
+
+        function updateBalanceDisplay() {
+            const balanceElement = document.getElementById('availableBalance');
+            if (balanceElement) {
+                balanceElement.textContent = '$' + Math.floor(userBalance).toLocaleString('es-MX');
+            }
+        }
+
+        function bindInputValidation() {
+            const withdrawInput = document.getElementById('withdrawAmount');
+            const errorElement = document.getElementById('amountError');
+
+            if (withdrawInput) {
+                withdrawInput.addEventListener('input', function() {
+                    this.value = this.value.replace(/[^\d]/g, '');
+                    
+                    if (this.value.length > 1 && this.value.charAt(0) === '0') {
+                        this.value = this.value.replace(/^0+/, '');
+                    }
+
+                    if (errorElement) {
+                        errorElement.textContent = '';
+                    }
+
+                    const wrapper = this.closest('.amount-input-wrapper');
+                    if (wrapper) {
+                        wrapper.classList.remove('error');
+                    }
+
+                    updateFeeCalculation();
+                });
+            }
+        }
+
+        function updateFeeCalculation() {
+            const withdrawInput = document.getElementById('withdrawAmount');
+            const feeCalculation = document.getElementById('feeCalculation');
+            const feeAmount = document.getElementById('feeAmount');
+            const feeCharge = document.getElementById('feeCharge');
+            const feeReceive = document.getElementById('feeReceive');
+
+            if (!withdrawInput || !feeCalculation) return;
+
+            const amount = parseInt(withdrawInput.value) || 0;
+
+            if (amount > 0) {
+                const fee = Math.floor(amount * 0.20);
+                const receive = amount - fee;
+
+                feeAmount.textContent = '$' + amount.toLocaleString('es-MX');
+                feeCharge.textContent = '$' + fee.toLocaleString('es-MX');
+                feeReceive.textContent = '$' + receive.toLocaleString('es-MX');
+                feeCalculation.style.display = 'block';
+            } else {
+                feeCalculation.style.display = 'none';
+            }
+        }
+
+        function directWithdraw() {
+            const withdrawInput = document.getElementById('withdrawAmount');
+            const errorElement = document.getElementById('amountError');
+
+            if (!withdrawInput || !errorElement) {
+                showToast('La página no cargó correctamente. Actualiza e inténtalo de nuevo.', 'error');
+                return;
+            }
+
+            const amountStr = withdrawInput.value.trim();
+            const amount = parseInt(amountStr);
+            const wrapper = withdrawInput.closest('.amount-input-wrapper');
+
+            if (!amountStr || isNaN(amount) || amount <= 0) {
+                errorElement.textContent = 'Ingresa un monto de retiro válido';
+                if (wrapper) wrapper.classList.add('error');
+                return;
+            }
+
+            if (!/^\d+$/.test(amountStr)) {
+                errorElement.textContent = 'El monto debe ser un número entero';
+                if (wrapper) wrapper.classList.add('error');
+                return;
+            }
+
+            if (amount < 100) {
+                errorElement.textContent = 'El retiro mínimo es de $100';
+                if (wrapper) wrapper.classList.add('error');
+                showToast('El retiro mínimo es de $100', 'error');
+                return;
+            }
+
+            if (amount > userBalance) {
+                errorElement.textContent = 'El monto no puede superar tu saldo disponible';
+                if (wrapper) wrapper.classList.add('error');
+                return;
+            }
+
+            if (!hasInvestment) {
+                showInvestRequiredModal();
+                return;
+            }
+
+            checkBankCardAndWithdraw(amount);
+        }
+
+        function checkBankCardAndWithdraw(amount) {
+            showToast('Verificando tu cuenta bancaria...', 'info');
+
+            if (window.API && window.API.bank && typeof window.API.bank.getBound === 'function') {
+                API.bank.getBound()
+                    .then(data => {
+                        if (data && data.card && data.card !== null) {
+                            selectedBankCard = data.card;
+                            submitWithdrawRequest(amount);
+                        } else {
+                            showToast('Vincula tu cuenta bancaria primero', 'info');
+                            setTimeout(() => {
+                                window.location.href = 'bind-bank.html';
+                            }, 1000);
+                        }
+                    })
+                    .catch(err => {
+                        tryWithdrawAPIForCard(amount);
+                    });
+            } else if (window.API && window.API.withdraw && typeof window.API.withdraw.getBankCard === 'function') {
+                tryWithdrawAPIForCard(amount);
+            } else {
+                showToast('No se pudo verificar la cuenta bancaria. Actualiza la página e inténtalo de nuevo.', 'error');
+            }
+        }
+
+        function tryWithdrawAPIForCard(amount) {
+            API.withdraw.getBankCard()
+                .then(data => {
+                    if (data && (data.card || data.bank_name)) {
+                        selectedBankCard = data.card || data;
+                        submitWithdrawRequest(amount);
+                    } else {
+                        showToast('Vincula tu cuenta bancaria primero', 'info');
+                        setTimeout(() => {
+                            window.location.href = 'bind-bank.html';
+                        }, 1000);
+                    }
+                })
+                .catch(err => {
+                    showToast('No se pudo verificar la cuenta bancaria. Actualiza la página e inténtalo de nuevo.', 'error');
+                });
+        }
+
+        function submitWithdrawRequest(amount) {
+            if (!hasInvestment) {
+                showInvestRequiredModal();
+                return;
+            }
+
+            if (!canWithdraw) {
+                showToast('Los retiros no están habilitados. Deposita primero o invita a otras personas.', 'error');
+                return;
+            }
+
+            showLoading();
+            showToast('Procesando tu solicitud de retiro...', 'info');
+
+            const requestParams = {
+                amount: amount
+            };
+
+            if (selectedBankCard && selectedBankCard.id) {
+                requestParams.bank_card_id = selectedBankCard.id;
+            }
+
+            fetch('/api/withdraw/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'token': getToken()
+                },
+                body: JSON.stringify(requestParams)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(res => {
+                hideLoading();
+
+                if (res.code === 1) {
+                    const withdrawInput = document.getElementById('withdrawAmount');
+                    if (withdrawInput) {
+                        withdrawInput.value = '';
+                        const wrapper = withdrawInput.closest('.amount-input-wrapper');
+                        if (wrapper) wrapper.classList.remove('error');
+                    }
+
+                    showToast('¡Solicitud de retiro enviada correctamente!', 'success');
+
+                    if (res.data && res.data.order_no) {
+                        startWithdrawPolling(res.data.order_no);
+                    }
+
+                    setTimeout(() => {
+                        loadUserBalance();
+                    }, 1000);
+                } else {
+                    showToast(res.msg || 'Error al enviar la solicitud de retiro', 'error');
+                }
+            })
+            .catch(err => {
+                hideLoading();
+                showToast('Error de red. Inténtalo más tarde.', 'error');
+            });
+        }
+
+        function startWithdrawPolling(orderNo) {
+            let pollCount = 0;
+            const maxPollCount = 5;
+
+            function pollStatus() {
+                if (pollCount >= maxPollCount) {
+                    showToast('Tu retiro se está procesando. Revisa el historial más tarde.', 'info');
+                    return;
+                }
+
+                pollCount++;
+
+                fetch(`/api/withdraw/query-status?order_no=${orderNo}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'token': getToken()
+                    }
+                })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.code === 1 && res.data) {
+                        const order = res.data;
+
+                        if (order.status === 1) {
+                            showToast('¡Retiro exitoso! Los fondos se transfirieron a tu cuenta bancaria', 'success');
+                            loadUserBalance();
+                        } else if (order.status === 2) {
+                            showToast('Retiro fallido: ' + (order.remark || 'Datos bancarios incorrectos'), 'error');
+                            loadUserBalance();
+                        } else if (order.status === 0) {
+                            let interval;
+                            if (pollCount <= 2) interval = 15000;
+                            else if (pollCount <= 4) interval = 60000;
+                            else interval = 120000;
+                            setTimeout(pollStatus, interval);
+                        }
+                    } else {
+                        let interval;
+                        if (pollCount <= 2) interval = 15000;
+                        else if (pollCount <= 4) interval = 60000;
+                        else interval = 120000;
+                        setTimeout(pollStatus, interval);
+                    }
+                })
+                .catch(err => {
+                    let interval;
+                    if (pollCount <= 2) interval = 15000;
+                    else if (pollCount <= 4) interval = 60000;
+                    else interval = 120000;
+                    setTimeout(pollStatus, interval);
+                });
+            }
+
+            setTimeout(pollStatus, 15000);
+        }
+
+        function loadBankCards() {
+            if (window.API && window.API.bank && typeof window.API.bank.getBound === 'function') {
+                API.bank.getBound()
+                    .then(data => {
+                        if (data && data.card && data.card !== null) {
+                            bankCardsList = [data.card];
+                            selectedBankCard = data.card;
+                        } else {
+                            bankCardsList = [];
+                        }
+                    })
+                    .catch(err => {
+                    });
+            } else if (window.API && window.API.withdraw && typeof window.API.withdraw.getBankCard === 'function') {
+                API.withdraw.getBankCard()
+                    .then(data => {
+                        if (data && (data.card || data.bank_name)) {
+                            bankCardsList = [data.card || data];
+                            selectedBankCard = data.card || data;
+                        } else {
+                            bankCardsList = [];
+                        }
+                    })
+                    .catch(err => {
+                    });
+            }
+        }
+
+        function goToWithdrawRecords() {
+            window.location.href = 'withdraw-records.html';
+        }
+
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            setTimeout(() => toast.className = 'toast', 3000);
+        }
+
+        function showLoading() {
+            document.getElementById('loadingMask').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingMask').classList.remove('active');
+        }
+
+        window.addEventListener('beforeunload', function() {
+            hideLoading();
+        });
+
+        window.addEventListener('pageshow', function(event) {
+            if (event.persisted) {
+                hideLoading();
+            }
+        });
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"e6187b1a91964c3bb3bf3a006075c4f0","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
