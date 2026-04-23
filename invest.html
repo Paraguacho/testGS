@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GSK Health</title>
+    <link rel="stylesheet" href="./spa/css/common.css">
+    <link rel="stylesheet" href="./spa/css/pages/invest.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <div class="background-effects">
+            <div class="gradient-orb orb-primary"></div>
+            <div class="gradient-orb orb-secondary"></div>
+            <div class="gradient-orb orb-accent"></div>
+            <div class="mesh-gradient"></div>
+        </div>
+
+        <header class="app-header">
+            <div class="header-container">
+                <div class="brand-section">
+                    <div class="brand-content">
+                        <h1 class="brand-title">GSK Health <span class="brand-subtitle">Portafolio</span></h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <section class="portfolio-section">
+                <div class="section-header">
+                    <h2 class="section-title">Inversiones activas</h2>
+                    <div class="title-accent"></div>
+                </div>
+
+                <div class="portfolio-grid" id="investContainer">
+                    <div class="portfolio-loader">
+                        <div class="loader-ring"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-navigation">
+            <div class="nav-item" onclick="location.href='index.html'">
+                <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                    <path d="M951.168 526.154a30 30 0 0 1-42.427 0c-0.044-0.045-0.081-0.1-0.125-0.14l-0.007 0.007-382.545-382.54a20 20 0 0 0-28.284 0l-382.545 382.54a30 30 0 1 1-42.426-42.426L476.567 79.837a50 50 0 0 1 70.71 0l403.758 403.758-0.006 0.006c0.045 0.045 0.094 0.081 0.139 0.126a30 30 0 0 1 0 42.427z m-72.246-221.373a30 30 0 0 1-30-30v-100h-100a30 30 0 0 1 0-60h130a30 30 0 0 1 30 30v130a30 30 0 0 1-30 30z m-698 237.25a30 30 0 0 1 29.994 29.75h0.006v307a20 20 0 0 0 20 20h137v-235a50 50 0 0 1 50-50h188a50 50 0 0 1 50 50v235h137a20 20 0 0 0 20-20v-302.7a30 30 0 1 1 59.656-4.554c0 0.084 0 0.166-0.006 0.25h0.35v337.004a50 50 0 0 1-50 50h-227V693.365a20 20 0 0 0-20-20h-128a20 20 0 0 0-20 20v265.416h-227a50 50 0 0 1-50-50v-337h0.006a30 30 0 0 1 29.994-29.75z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <div class="nav-item active">
+                <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                    <path d="M855.575329 252.041508a48.649905 48.649905 0 0 0-7.670985-4.574991l-302.619409-174.699659-8.858983-5.17799c-37.628927-19.019963-81.605841-18.747963-118.710768 1.245998l-310.173394 179.05965-6.442987 3.815992c-37.609927 23.224955-60.056883 63.560876-60.056883 107.90779v358.471299c0 43.488915 21.802957 83.395837 59.277884 107.321791l310.699393 179.35665c1.517997 1.009998 3.035994 1.879996 4.652991 2.779994l1.789997 1.029998c18.473964 10.08998 39.460923 15.41997 60.700881 15.41997 21.257958 0 42.223918-5.32999 60.677882-15.41997l2.648994-1.589997c0.894998-0.529999 1.788997-1.059998 2.686995-1.619997l302.871409-174.776658 10.23998-6.035988c35.74193-23.145955 57.448888-62.295878 58.011886-105.142795v-360.029297c0-43.566915-22.835955-84.524835-59.724883-107.34179z m-0.08 466.983088c-0.309999 22.386956-11.757977 43.080916-29.529942 54.605893L513.552997 953.976137l-2.045996 1.264997c-0.738999 0.428999-1.478997 0.874998-2.217996 1.323998-19.351962 10.25898-44.716913 9.596981-62.295878 0.02l-2.239996-1.285998-14.540971 26.126949 12.340976-27.448946-189.066631-109.035787L131.600743 774.468487c-19.251962-12.323976-30.75894-33.387935-30.75894-56.37589V359.618298c0-23.457954 11.836977-44.775913 31.207939-56.74789l314.826385-181.824644c9.400982-5.05999 20.22596-7.728985 31.284939-7.728985 10.45298 0 20.67196 2.433995 30.464941 7.242986l310.620393 179.410649 4.010992 2.413995c19.895961 11.875977 32.236937 33.718934 32.236937 57.000889v359.639298h0.001zM590.391847 490.672042v238.357534c0 41.778918 64.788873 41.778918 64.788873 0V490.672042c-0.001-41.776918-64.788873-41.776918-64.788873 0z m-180.074648 79.269845V729.108576c0 41.775918 64.787873 41.775918 64.787873 0V569.941887c0-41.775918-64.787873-41.775918-64.787873 0z m-180.071649 20.40096v138.802729c0 41.778918 64.787873 41.778918 64.787874 0V590.342847c-0.001-41.774918-64.787873-41.774918-64.787874 0z m437.665145-319.457376c-5.974988-7.475985-15.048971-12.419976-25.18995-12.419976H535.005955c-41.794918 0-41.794918 64.787873 0 64.787874h38.389925c-82.326839 84.876834-198.799612 140.495726-318.368378 134.850736-41.796918-1.965996-41.600919 62.819877 0 64.786874 133.662739 6.306988 261.34849-53.963895 355.298306-145.965715v33.541934c0 41.776918 64.787873 41.776918 64.787873 0V298.666417c3.813993-10.766979 0.176-20.73396-7.202986-27.780946z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <div class="nav-item" onclick="location.href='invite.html'">
+                <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                    <path d="M590.933333 401.066667a51.2 51.2 0 0 0-29.866666-10.666667 44.8 44.8 0 0 0-27.733334 14.933333 38.4 38.4 0 0 0-8.533333 29.866667 44.8 44.8 0 0 0 8.533333 23.466667l6.4 6.4 10.666667 8.533333a113.066667 113.066667 0 0 1 0 157.866667L384 797.866667l-6.4 6.4a108.8 108.8 0 0 1-78.933333 32 110.933333 110.933333 0 0 1-78.933334-189.866667l4.266667-4.266667 4.266667-4.266666 78.933333-78.933334 4.266667-4.266666a57.6 57.6 0 0 0 6.4-25.6 42.666667 42.666667 0 0 0-44.8-38.4l-19.2 8.533333h-2.133334l-89.6 89.6a194.133333 194.133333 0 0 0 0 273.066667A198.4 198.4 0 0 0 298.666667 917.333333a189.866667 189.866667 0 0 0 136.533333-57.6h2.133333l174.933334-174.933333 4.266666-4.266667a194.133333 194.133333 0 0 0-8.533333-264.533333z" fill="currentColor"></path><path d="M861.866667 162.133333A194.133333 194.133333 0 0 0 597.333333 155.733333h-4.266666l-177.066667 177.066667a194.133333 194.133333 0 0 0 0 273.066667l19.2 17.066666h4.266667a36.266667 36.266667 0 0 0 21.333333 6.4h2.133333a38.4 38.4 0 0 0 27.733334-12.8 40.533333 40.533333 0 0 0 10.666666-29.866666 38.4 38.4 0 0 0-8.533333-21.333334l-4.266667-6.4h-4.266666l-10.666667-10.666666a113.066667 113.066667 0 0 1 0-157.866667h4.266667l4.266666-4.266667h-2.133333l166.4-166.4a110.933333 110.933333 0 0 1 157.866667 157.866667l-85.333334 85.333333-4.266666 4.266667a40.533333 40.533333 0 0 0-6.4 27.733333 38.4 38.4 0 0 0 42.666666 36.266667 29.866667 29.866667 0 0 0 19.2-6.4l6.4-4.266667 89.6-89.6c0-2.133333 2.133333-2.133333 2.133334-4.266666a194.133333 194.133333 0 0 0-6.4-264.533334z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <div class="nav-item" onclick="location.href='team.html'">
+                <svg class="nav-icon" viewBox="0 0 1198 1024" fill="currentColor">
+                    <path d="M801.391304 485.6917a242.84585 242.84585 0 1 1 242.84585-242.84585 242.84585 242.84585 0 0 1-242.84585 242.84585z m0-427.87126a185.025409 185.025409 0 1 0 185.02541 185.02541 185.603614 185.603614 0 0 0-185.02541-185.02541zM966.757764 1024H636.024845a231.281762 231.281762 0 0 1-231.281762-231.281762v-23.70638a231.281762 231.281762 0 0 1 231.281762-231.281762h330.732919a231.281762 231.281762 0 0 1 231.281762 231.281762v23.70638a231.281762 231.281762 0 0 1-231.281762 231.281762zM636.024845 597.863354a173.461321 173.461321 0 0 0-173.461322 173.461321v23.706381a173.461321 173.461321 0 0 0 173.461322 173.461321h330.732919a173.461321 173.461321 0 0 0 173.461321-173.461321v-23.706381a173.461321 173.461321 0 0 0-173.461321-173.461321z" fill="currentColor"></path><path d="M446.952005 1024H200.058724a200.058724 200.058724 0 0 1 0-400.117448h246.893281a235.329193 235.329193 0 0 1 35.270468 3.469227l45.678148 8.673066-27.753811 37.583286A180.977979 180.977979 0 0 0 462.563523 782.310559a182.712592 182.712592 0 0 0 93.09091 158.428007l39.896103 23.128176-38.16149 26.019198a198.324111 198.324111 0 0 1-110.437041 34.11406z m-246.893281-342.297007a142.238283 142.238283 0 0 0 0 284.476567h246.893281a129.517787 129.517787 0 0 0 39.317899-5.782044A238.220215 238.220215 0 0 1 404.743083 782.310559a240.533032 240.533032 0 0 1 21.971767-100.607566zM323.216262 592.08131a200.636928 200.636928 0 1 1 201.215133-200.636928 201.215133 201.215133 0 0 1-201.215133 200.636928z m0-343.453416a142.816488 142.816488 0 1 0 143.394692 142.816488A143.394692 143.394692 0 0 0 323.216262 248.627894z" fill="currentColor"></path><path d="M663.778656 818.737436m30.644834 0l213.935629 0q30.644833 0 30.644834 30.644834l0 4.625635q0 30.644833-30.644834 30.644834l-213.935629 0q-30.644833 0-30.644834-30.644834l0-4.625635q0-30.644833 30.644834-30.644834Z" fill="currentColor"></path>
+                </svg>
+            </div>
+            <div class="nav-item" onclick="location.href='my.html'">
+                <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                    <path d="M948.736 658.944a20.48 20.48 0 0 0-15.872-16.0768L897.2288 634.88c-5.8368-10.24-12.5952-21.9136-16.5888-29.2864l11.264-35.328a20.48 20.48 0 0 0-5.9392-21.6064 193.1264 193.1264 0 0 0-64.4096-37.4784 20.48 20.48 0 0 0-21.9136 5.632L775.68 542.72a149.9136 149.9136 0 0 0-35.84 0L716.8 516.8128a20.48 20.48 0 0 0-21.9136-5.632 194.56 194.56 0 0 0-64.4096 37.4784 20.48 20.48 0 0 0-5.8368 21.6064L634.88 604.16a148.992 148.992 0 0 0-18.0224 31.3344l-34.304 7.4752a20.48 20.48 0 0 0-15.872 16.0768 196.7104 196.7104 0 0 0 0 74.752 20.48 20.48 0 0 0 15.872 16.0768l34.304 7.4752A151.6544 151.6544 0 0 0 634.88 788.48l-10.24 33.8944a20.48 20.48 0 0 0 5.9392 21.6064 194.56 194.56 0 0 0 64.4096 37.4784 20.48 20.48 0 0 0 21.8112-5.632L739.84 849.92a149.9136 149.9136 0 0 0 35.84 0L798.72 875.8272a20.48 20.48 0 0 0 15.2576 6.7584 21.0944 21.0944 0 0 0 6.656-1.1264 193.1264 193.1264 0 0 0 64.4096-37.4784 20.48 20.48 0 0 0 5.9392-21.6064L880.64 788.48a151.6544 151.6544 0 0 0 17.92-30.72l34.304-7.4752a20.48 20.48 0 0 0 15.872-16.0768 196.7104 196.7104 0 0 0 0-74.752z m-38.2976 53.8624l-31.3344 6.7584a20.48 20.48 0 0 0-15.1552 13.4144 111.104 111.104 0 0 1-21.7088 37.888 20.48 20.48 0 0 0-3.9936 19.6608l10.24 30.72a150.2208 150.2208 0 0 1-27.9552 16.384L798.72 813.9776a20.48 20.48 0 0 0-15.2576-6.7584 26.2144 26.2144 0 0 0-3.9936 0 106.9056 106.9056 0 0 1-43.4176 0 20.48 20.48 0 0 0-19.2512 6.4512l-21.4016 23.8592a150.2208 150.2208 0 0 1-27.9552-16.384l10.24-30.72a20.48 20.48 0 0 0-3.9936-19.6608 111.104 111.104 0 0 1-21.7088-37.888 20.48 20.48 0 0 0-15.1552-13.4144l-31.3344-6.7584A151.04 151.04 0 0 1 604.16 696.32a147.8656 147.8656 0 0 1 0.9216-16.384l31.3344-6.8608a20.48 20.48 0 0 0 15.1552-13.4144 111.104 111.104 0 0 1 21.7088-37.888 20.48 20.48 0 0 0 3.9936-19.7632l-10.24-30.72a150.2208 150.2208 0 0 1 27.9552-16.384L716.8 578.6624a20.48 20.48 0 0 0 19.2512 6.4512 110.6944 110.6944 0 0 1 43.4176 0 20.48 20.48 0 0 0 19.2512-6.4512l21.4016-23.8592a150.2208 150.2208 0 0 1 27.9552 16.384l-9.0112 28.2624a23.04 23.04 0 0 0 3.2768 23.04 444.1088 444.1088 0 0 1 22.528 39.424 20.48 20.48 0 0 0 14.2336 11.1616l31.3344 6.8608A147.8656 147.8656 0 0 1 911.36 696.32a151.04 151.04 0 0 1-0.9216 16.4864z" fill="currentColor"></path><path d="M762.5728 621.6704a78.848 78.848 0 1 0 78.336 78.7456 78.7456 78.7456 0 0 0-78.336-78.7456z m0 116.6336a37.888 37.888 0 1 1 37.376-37.888 37.6832 37.6832 0 0 1-37.376 37.888zM671.3344 291.7376a220.16 220.16 0 1 0-321.3312 195.2768A389.9392 389.9392 0 0 0 71.68 860.16a20.48 20.48 0 0 0 40.96 0 348.16 348.16 0 0 1 348.16-348.16 18.5344 18.5344 0 0 0 5.2224-0.8192 220.2624 220.2624 0 0 0 205.312-219.4432z m-399.36 0A179.2 179.2 0 1 1 451.1744 471.04a179.4048 179.4048 0 0 1-179.2-179.3024z" fill="currentColor"></path>
+                </svg>
+            </div>
+        </nav>
+    </div>
+    
+    <div class="toast-notification" id="toast"></div>
+
+    <script src="./spa/js/common.js"></script>
+    <script src="./spa/js/time-utils.js"></script>
+    <script src="./spa/js/device-session-manager.js"></script>
+    <script src="./spa/js/profit-detector.js"></script>
+    <script src="./spa/js/api.js"></script>
+    <script>
+        const investContainer = document.getElementById('investContainer');
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            initPage();
+            
+            if (window.unifiedProfitManager) {
+                setTimeout(() => {
+                    window.unifiedProfitManager.smartProfitCheck('page_products');
+                }, 2000);
+            }
+        });
+        
+        function initPage() {
+            loadInvestments();
+        }
+        
+        async function loadInvestments() {
+            try {
+                const data = await API.invest.getRecords();
+                const investments = (data && data.records) ? data.records : [];
+                renderInvestments(investments);
+            } catch (error) {
+                investContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 8V12L15 15"/>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Error al cargar</p>
+                        <p class="empty-hint">Inténtalo de nuevo más tarde</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function renderInvestments(investments) {
+            try {
+                if (!investments || !Array.isArray(investments) || investments.length === 0) {
+                    investContainer.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                    <path d="M3 9H21M9 21V9"/>
+                                </svg>
+                            </div>
+                            <p class="empty-text">Aún no hay inversiones</p>
+                            <p class="empty-hint">Comienza a invertir para construir tu portafolio</p>
+                            <a href="index.html" class="empty-btn">
+                                <span>Explorar productos</span>
+                                <svg viewBox="0 0 24 24" fill="none">
+                                    <path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </a>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                investContainer.innerHTML = investments.map((invest, index) => {
+                    const amount = parseFloat(invest.amount || 0);
+                    const dailyProfitRate = parseFloat(invest.daily_profit_rate || 0);
+                    const dailyProfit = amount * dailyProfitRate;
+                    const period = parseInt(invest.period || 0);
+                    const issuedDays = parseInt(invest.issued_days || 0);
+                    const issuedProfit = parseFloat(invest.issued_profit || 0);
+                    const totalReturn = dailyProfit * period;
+                    const productImage = invest.product_image || './uploads/product/default.png';
+                    const progress = period > 0 ? Math.round((issuedDays / period) * 100) : 0;
+                    
+                    return `
+                    <div class="product-card" data-idx="${index}">
+                        <div class="product-image">
+                            <img src="${productImage}" alt="${invest.product_name || 'Producto'}">
+                            <div class="product-name-overlay">${invest.product_name || 'Producto de inversión'}</div>
+                            <div class="product-progress-info">
+                                <div class="progress-label">${issuedDays}/${period} días</div>
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-bar-fill" style="width: ${progress}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="product-content">
+                            <div class="product-tags">
+                                <div class="info-tag price-tag">
+                                    <div class="tag-label">CAPITAL</div>
+                                    <div class="tag-value">\$${formatMoney(amount)}</div>
+                                </div>
+                                <div class="info-tag daily-tag">
+                                    <div class="tag-label">DIARIO</div>
+                                    <div class="tag-value">\$${formatMoney(dailyProfit)}</div>
+                                </div>
+                            </div>
+                            <div class="product-tags">
+                                <div class="info-tag days-tag">
+                                    <div class="tag-label">COBRADO</div>
+                                    <div class="tag-value earned">\$${formatMoney(issuedProfit)}</div>
+                                </div>
+                                <div class="info-tag total-tag">
+                                    <div class="tag-label">TOTAL</div>
+                                    <div class="tag-value">\$${formatMoney(totalReturn)}</div>
+                                </div>
+                            </div>
+                            <div class="invest-time-info">
+                                <div class="time-row">
+                                    <span class="time-label">Inicio:</span>
+                                    <span class="time-value">${invest.create_time ? formatDateTime(invest.create_time) : 'N/D'}</span>
+                                </div>
+                                <div class="time-row">
+                                    <span class="time-label">Próximo rendimiento:</span>
+                                    <span class="time-value">${invest.next_profit_time ? formatDateOnly(invest.next_profit_time) : 'Pendiente'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                investContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 8V12L15 15"/>
+                            </svg>
+                        </div>
+                        <p class="empty-text">Error de visualización</p>
+                        <p class="empty-hint">No se pudieron mostrar las inversiones</p>
+                    </div>
+                `;
+            }
+        }
+        
+        function formatMoney(amount) {
+            const numAmount = parseFloat(amount);
+            if (isNaN(numAmount) || numAmount === null || numAmount === undefined) return '0';
+            return Math.floor(numAmount).toLocaleString('es-MX');
+        }
+        
+        function formatDateTime(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+        
+        function formatDateOnly(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            if (isNaN(date.getTime())) return '';
+            
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            const hours = date.getHours().toString().padStart(2, '0');
+            const minutes = date.getMinutes().toString().padStart(2, '0');
+            
+            return `${day}/${month}/${year} ${hours}:${minutes}`;
+        }
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"e6187b1a91964c3bb3bf3a006075c4f0","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>

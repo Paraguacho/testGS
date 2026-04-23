@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GSK Health</title>
+    <link rel="stylesheet" href="./spa/css/common.css">
+    <link rel="stylesheet" href="./spa/css/pages/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .rules-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10002;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .rules-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .rules-modal-overlay {
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .rules-modal-content {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 253, 251, 0.95) 100%);
+            border: 2px solid var(--accent-primary);
+            border-radius: 24px;
+            max-width: 460px;
+            width: 100%;
+            box-shadow: 
+                0 0 40px rgba(0, 168, 107, 0.3),
+                0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: rulesSlideUp 0.4s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rules-modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-gradient);
+            box-shadow: 0 0 20px rgba(0, 168, 107, 0.5);
+        }
+
+        @keyframes rulesSlideUp {
+            from {
+                transform: translateY(40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .rules-modal-body {
+            padding: 32px 28px;
+        }
+
+        .rules-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px;
+            background: linear-gradient(135deg, rgba(0, 168, 107, 0.08) 0%, rgba(46, 204, 113, 0.05) 100%);
+            border: 2px solid rgba(0, 168, 107, 0.2);
+            border-radius: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rule-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent-gradient);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .rule-item:hover {
+            transform: translateX(6px);
+            border-color: rgba(0, 168, 107, 0.4);
+            box-shadow: 0 4px 16px rgba(0, 168, 107, 0.15);
+        }
+
+        .rule-item:hover::before {
+            opacity: 1;
+        }
+
+        .rule-icon {
+            font-size: 28px;
+            line-height: 1;
+            flex-shrink: 0;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .rule-text {
+            font-size: 15px;
+            color: var(--text-primary);
+            font-weight: 600;
+            line-height: 1.6;
+            flex: 1;
+            padding-top: 3px;
+        }
+
+        .rules-modal-actions {
+            padding: 0 28px 28px 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .rules-modal-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--accent-gradient);
+            border: none;
+            border-radius: 14px;
+            color: #FFFFFF;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 16px rgba(0, 168, 107, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rules-modal-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s ease, height 0.5s ease;
+        }
+
+        .rules-modal-btn:hover::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .rules-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 0 30px rgba(0, 168, 107, 0.4),
+                0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .rules-modal-btn:active {
+            transform: translateY(0);
+        }
+
+        .rules-modal-close {
+            width: 100%;
+            padding: 14px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 14px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .rules-modal-close:hover {
+            background: var(--bg-elevated);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .rules-modal-close:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 480px) {
+            .rules-modal-overlay {
+                padding: 16px;
+            }
+
+            .rules-modal-content {
+                max-width: 100%;
+                border-radius: 20px;
+            }
+
+            .rules-modal-body {
+                padding: 24px 20px;
+            }
+
+            .rules-list {
+                gap: 14px;
+            }
+
+            .rule-item {
+                padding: 14px;
+                border-radius: 12px;
+                gap: 12px;
+            }
+
+            .rule-icon {
+                font-size: 24px;
+            }
+
+            .rule-text {
+                font-size: 14px;
+            }
+
+            .rules-modal-actions {
+                padding: 0 20px 20px 20px;
+            }
+
+            .rules-modal-btn {
+                padding: 14px;
+                font-size: 15px;
+                border-radius: 12px;
+            }
+
+            .rules-modal-close {
+                padding: 12px;
+                font-size: 14px;
+                border-radius: 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .rules-modal-overlay {
+                padding: 12px;
+            }
+
+            .rules-modal-body {
+                padding: 20px 16px;
+            }
+
+            .rules-list {
+                gap: 12px;
+            }
+
+            .rule-item {
+                padding: 12px;
+                gap: 10px;
+            }
+
+            .rule-icon {
+                font-size: 22px;
+            }
+
+            .rule-text {
+                font-size: 13px;
+            }
+
+            .rules-modal-actions {
+                padding: 0 16px 16px 16px;
+                gap: 10px;
+            }
+
+            .rules-modal-btn {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            .rules-modal-close {
+                padding: 11px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="background-effects">
+            <div class="gradient-orb orb-primary"></div>
+            <div class="gradient-orb orb-secondary"></div>
+            <div class="gradient-orb orb-accent"></div>
+            <div class="mesh-gradient"></div>
+        </div>
+
+        <div class="page-wrapper">
+            <header class="sticky-header">
+                <div class="header-content">
+                    <h1 class="brand-name">GSK Health</h1>
+                    
+                    <div class="balance-display">
+                        <div class="balance-label">Saldo</div>
+                        <div class="balance-amount">
+                            <span class="currency-symbol">$</span>
+                            <span id="userBalance">0</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="main-container">
+                <section class="hero-banner-section">
+                    <div class="slider-container" id="bannerSection">
+                        <div class="slider-wrapper" id="bannerContainer">
+                            <div class="banner-loader">
+                                <div class="pulse-ring"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="operations-section">
+                    <div class="operations-grid">
+                        <button class="operation-item recharge-operation" onclick="location.href='recharge.html'">
+                            <div class="operation-icon">
+                                <svg viewBox="0 0 1024 1024" fill="currentColor">
+                                    <path d="M495.616 304.128h28.16v37.376c27.648 2.048 49.152 9.216 65.024 23.04 18.944 14.336 30.208 38.912 34.816 71.68h-48.128c-2.56-19.968-9.728-33.792-21.504-41.984-7.68-5.632-17.92-9.216-30.208-10.752v104.448c33.792 12.8 53.76 20.48 57.856 22.528 31.744 17.92 47.616 43.008 47.616 75.776 0 32.256-12.288 56.832-35.84 72.704-18.432 11.776-40.96 18.944-69.12 20.48v39.936h-28.16v-39.936c-31.232-2.048-54.784-10.752-71.168-27.136-19.456-18.432-29.696-45.568-32.256-83.456h49.664c2.048 24.576 7.68 42.496 18.944 53.248 8.192 8.192 20.48 12.8 35.328 14.848v-111.616L443.904 506.88c-31.744-16.896-48.128-41.984-48.128-75.776 0-29.696 11.264-52.736 34.304-68.608 17.408-12.8 38.912-19.968 65.024-20.992l0.512-37.376z m0 78.848c-12.8 1.024-23.552 4.608-31.232 9.728-12.8 8.192-18.944 20.992-18.944 38.4 0 18.944 16.384 33.792 48.128 45.568 0.512 0 1.024 0.512 2.048 0.512V382.976z m28.16 254.976c14.336-2.048 26.624-5.632 36.352-12.288 12.8-9.216 19.968-21.504 19.968-37.376 0-20.992-16.384-37.376-48.128-48.64-2.56-1.024-5.632-2.048-8.192-3.072v101.376zM960 678.912h-164.352c-15.872 0-29.184-13.312-29.184-29.184s12.8-29.184 29.184-29.184h137.728c14.848 0 26.624 11.776 26.624 26.624v31.744z"></path><path d="M960 651.776v138.752c0 15.872-13.312 29.184-29.184 29.184s-29.184-12.8-29.184-29.184v-112.128c0-14.848 11.776-26.624 26.624-26.624h31.744z"></path><path d="M900.096 459.776c3.072 17.92 17.92 29.696 33.28 27.136 14.848-2.56 25.088-17.92 23.552-34.304l-0.512-3.072c-30.72-217.6-217.6-385.024-443.392-385.024-247.296 0-448 200.704-448 448s200.704 448 448 448c196.608 0 364.032-126.976 423.936-303.104 4.096-12.288 1.536-13.312 4.608-26.112l-55.296-4.608c-2.56 8.704-3.584 11.264-6.656 19.968-2.048 6.144-4.608 12.288-7.168 17.92-83.968 198.144-312.32 290.816-509.952 207.36-197.632-83.456-290.816-312.32-207.36-510.464C239.104 162.304 467.968 70.144 665.6 153.6c126.464 53.248 212.48 167.936 232.96 297.472 0 0.512 1.024 6.144 1.536 8.704z"></path>
+                                </svg>
+                            </div>
+                            <div class="operation-label">
+                                <h3 class="label-title">Recargar</h3>
+                                <p class="label-subtitle">Agregar fondos</p>
+                            </div>
+                        </button>
+
+                        <button class="operation-item service-operation" id="quickServiceBtn">
+                            <div class="operation-icon">
+                                <svg viewBox="0 0 1024 1024" fill="currentColor">
+                                    <path d="M512 816.64c-138.24 0-250.88-112.64-250.88-250.88s112.64-250.88 250.88-250.88 250.88 112.64 250.88 250.88-112.64 250.88-250.88 250.88z m0-448c-110.08 0-199.68 89.6-199.68 199.68S401.92 768 512 768s199.68-89.6 199.68-199.68c0-112.64-89.6-199.68-199.68-199.68z"></path><path d="M583.68 652.8c-2.56 0-5.12 0-7.68 2.56-17.92 17.92-40.96 28.16-64 28.16-23.04 0-46.08-10.24-64-25.6-2.56-2.56-5.12-2.56-7.68-2.56s-5.12 0-7.68 2.56c-5.12 5.12-5.12 12.8 0 17.92 20.48 20.48 51.2 33.28 79.36 33.28 30.72 0 58.88-12.8 81.92-35.84 5.12-5.12 5.12-12.8 0-17.92-2.56 0-7.68-2.56-10.24-2.56z"></path><path d="M847.36 517.12C819.2 355.84 678.4 232.96 512 232.96S204.8 355.84 176.64 517.12c-35.84 5.12-61.44 38.4-61.44 74.24 0 38.4 30.72 71.68 69.12 74.24h7.68c10.24 0 20.48-2.56 30.72-7.68-7.68-25.6-10.24-53.76-10.24-84.48 0-20.48 2.56-38.4 5.12-56.32 25.6-140.8 148.48-248.32 296.96-248.32s271.36 107.52 296.96 248.32c2.56 17.92 5.12 38.4 5.12 56.32 0 28.16-5.12 56.32-12.8 84.48 10.24 5.12 20.48 7.68 30.72 7.68h7.68c38.4-2.56 69.12-35.84 69.12-74.24-2.56-35.84-30.72-66.56-64-74.24z"></path><path d="M512 1024C230.4 1024 0 793.6 0 512S230.4 0 512 0s512 230.4 512 512c0 15.36-10.24 25.6-25.6 25.6s-25.6-10.24-25.6-25.6c0-253.44-207.36-460.8-460.8-460.8S51.2 258.56 51.2 512s207.36 460.8 460.8 460.8c81.92 0 163.84-23.04 232.96-64 12.8-7.68 28.16-2.56 35.84 10.24 7.68 12.8 2.56 28.16-10.24 35.84C693.76 998.4 604.16 1024 512 1024z"></path>
+                                </svg>
+                            </div>
+                            <div class="operation-label">
+                                <h3 class="label-title">Atención</h3>
+                                <p class="label-subtitle">Contáctanos</p>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="investments-section">
+                    <div class="section-heading">
+                        <div class="heading-divider"></div>
+                        <h2 class="heading-text">Paquetes de inversión</h2>
+                        <div class="heading-divider"></div>
+                    </div>
+                    <div class="investments-list" id="productsContainer">
+                        <div class="loading-state">
+                            <div class="pulse-ring"></div>
+                            <p>Cargando inversiones...</p>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <nav class="bottom-navigation">
+                <div class="nav-item active">
+                    <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                        <path d="M951.168 526.154a30 30 0 0 1-42.427 0c-0.044-0.045-0.081-0.1-0.125-0.14l-0.007 0.007-382.545-382.54a20 20 0 0 0-28.284 0l-382.545 382.54a30 30 0 1 1-42.426-42.426L476.567 79.837a50 50 0 0 1 70.71 0l403.758 403.758-0.006 0.006c0.045 0.045 0.094 0.081 0.139 0.126a30 30 0 0 1 0 42.427z m-72.246-221.373a30 30 0 0 1-30-30v-100h-100a30 30 0 0 1 0-60h130a30 30 0 0 1 30 30v130a30 30 0 0 1-30 30z m-698 237.25a30 30 0 0 1 29.994 29.75h0.006v307a20 20 0 0 0 20 20h137v-235a50 50 0 0 1 50-50h188a50 50 0 0 1 50 50v235h137a20 20 0 0 0 20-20v-302.7a30 30 0 1 1 59.656-4.554c0 0.084 0 0.166-0.006 0.25h0.35v337.004a50 50 0 0 1-50 50h-227V693.365a20 20 0 0 0-20-20h-128a20 20 0 0 0-20 20v265.416h-227a50 50 0 0 1-50-50v-337h0.006a30 30 0 0 1 29.994-29.75z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="nav-item" onclick="location.href='invest.html'">
+                    <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                        <path d="M855.575329 252.041508a48.649905 48.649905 0 0 0-7.670985-4.574991l-302.619409-174.699659-8.858983-5.17799c-37.628927-19.019963-81.605841-18.747963-118.710768 1.245998l-310.173394 179.05965-6.442987 3.815992c-37.609927 23.224955-60.056883 63.560876-60.056883 107.90779v358.471299c0 43.488915 21.802957 83.395837 59.277884 107.321791l310.699393 179.35665c1.517997 1.009998 3.035994 1.879996 4.652991 2.779994l1.789997 1.029998c18.473964 10.08998 39.460923 15.41997 60.700881 15.41997 21.257958 0 42.223918-5.32999 60.677882-15.41997l2.648994-1.589997c0.894998-0.529999 1.788997-1.059998 2.686995-1.619997l302.871409-174.776658 10.23998-6.035988c35.74193-23.145955 57.448888-62.295878 58.011886-105.142795v-360.029297c0-43.566915-22.835955-84.524835-59.724883-107.34179z m-0.08 466.983088c-0.309999 22.386956-11.757977 43.080916-29.529942 54.605893L513.552997 953.976137l-2.045996 1.264997c-0.738999 0.428999-1.478997 0.874998-2.217996 1.323998-19.351962 10.25898-44.716913 9.596981-62.295878 0.02l-2.239996-1.285998-14.540971 26.126949 12.340976-27.448946-189.066631-109.035787L131.600743 774.468487c-19.251962-12.323976-30.75894-33.387935-30.75894-56.37589V359.618298c0-23.457954 11.836977-44.775913 31.207939-56.74789l314.826385-181.824644c9.400982-5.05999 20.22596-7.728985 31.284939-7.728985 10.45298 0 20.67196 2.433995 30.464941 7.242986l310.620393 179.410649 4.010992 2.413995c19.895961 11.875977 32.236937 33.718934 32.236937 57.000889v359.639298h0.001zM590.391847 490.672042v238.357534c0 41.778918 64.788873 41.778918 64.788873 0V490.672042c-0.001-41.776918-64.788873-41.776918-64.788873 0z m-180.074648 79.269845V729.108576c0 41.775918 64.787873 41.775918 64.787873 0V569.941887c0-41.775918-64.787873-41.775918-64.787873 0z m-180.071649 20.40096v138.802729c0 41.778918 64.787873 41.778918 64.787874 0V590.342847c-0.001-41.774918-64.787873-41.774918-64.787874 0z m437.665145-319.457376c-5.974988-7.475985-15.048971-12.419976-25.18995-12.419976H535.005955c-41.794918 0-41.794918 64.787873 0 64.787874h38.389925c-82.326839 84.876834-198.799612 140.495726-318.368378 134.850736-41.796918-1.965996-41.600919 62.819877 0 64.786874 133.662739 6.306988 261.34849-53.963895 355.298306-145.965715v33.541934c0 41.776918 64.787873 41.776918 64.787873 0V298.666417c3.813993-10.766979 0.176-20.73396-7.202986-27.780946z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="nav-item" onclick="location.href='invite.html'">
+                    <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                        <path d="M590.933333 401.066667a51.2 51.2 0 0 0-29.866666-10.666667 44.8 44.8 0 0 0-27.733334 14.933333 38.4 38.4 0 0 0-8.533333 29.866667 44.8 44.8 0 0 0 8.533333 23.466667l6.4 6.4 10.666667 8.533333a113.066667 113.066667 0 0 1 0 157.866667L384 797.866667l-6.4 6.4a108.8 108.8 0 0 1-78.933333 32 110.933333 110.933333 0 0 1-78.933334-189.866667l4.266667-4.266667 4.266667-4.266666 78.933333-78.933334 4.266667-4.266666a57.6 57.6 0 0 0 6.4-25.6 42.666667 42.666667 0 0 0-44.8-38.4l-19.2 8.533333h-2.133334l-89.6 89.6a194.133333 194.133333 0 0 0 0 273.066667A198.4 198.4 0 0 0 298.666667 917.333333a189.866667 189.866667 0 0 0 136.533333-57.6h2.133333l174.933334-174.933333 4.266666-4.266667a194.133333 194.133333 0 0 0-8.533333-264.533333z" fill="currentColor"></path><path d="M861.866667 162.133333A194.133333 194.133333 0 0 0 597.333333 155.733333h-4.266666l-177.066667 177.066667a194.133333 194.133333 0 0 0 0 273.066667l19.2 17.066666h4.266667a36.266667 36.266667 0 0 0 21.333333 6.4h2.133333a38.4 38.4 0 0 0 27.733334-12.8 40.533333 40.533333 0 0 0 10.666666-29.866666 38.4 38.4 0 0 0-8.533333-21.333334l-4.266667-6.4h-4.266666l-10.666667-10.666666a113.066667 113.066667 0 0 1 0-157.866667h4.266667l4.266666-4.266667h-2.133333l166.4-166.4a110.933333 110.933333 0 0 1 157.866667 157.866667l-85.333334 85.333333-4.266666 4.266667a40.533333 40.533333 0 0 0-6.4 27.733333 38.4 38.4 0 0 0 42.666666 36.266667 29.866667 29.866667 0 0 0 19.2-6.4l6.4-4.266667 89.6-89.6c0-2.133333 2.133333-2.133333 2.133334-4.266666a194.133333 194.133333 0 0 0-6.4-264.533334z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="nav-item" onclick="location.href='team.html'">
+                    <svg class="nav-icon" viewBox="0 0 1198 1024" fill="currentColor">
+                        <path d="M801.391304 485.6917a242.84585 242.84585 0 1 1 242.84585-242.84585 242.84585 242.84585 0 0 1-242.84585 242.84585z m0-427.87126a185.025409 185.025409 0 1 0 185.02541 185.02541 185.603614 185.603614 0 0 0-185.02541-185.02541zM966.757764 1024H636.024845a231.281762 231.281762 0 0 1-231.281762-231.281762v-23.70638a231.281762 231.281762 0 0 1 231.281762-231.281762h330.732919a231.281762 231.281762 0 0 1 231.281762 231.281762v23.70638a231.281762 231.281762 0 0 1-231.281762 231.281762zM636.024845 597.863354a173.461321 173.461321 0 0 0-173.461322 173.461321v23.706381a173.461321 173.461321 0 0 0 173.461322 173.461321h330.732919a173.461321 173.461321 0 0 0 173.461321-173.461321v-23.706381a173.461321 173.461321 0 0 0-173.461321-173.461321z" fill="currentColor"></path><path d="M446.952005 1024H200.058724a200.058724 200.058724 0 0 1 0-400.117448h246.893281a235.329193 235.329193 0 0 1 35.270468 3.469227l45.678148 8.673066-27.753811 37.583286A180.977979 180.977979 0 0 0 462.563523 782.310559a182.712592 182.712592 0 0 0 93.09091 158.428007l39.896103 23.128176-38.16149 26.019198a198.324111 198.324111 0 0 1-110.437041 34.11406z m-246.893281-342.297007a142.238283 142.238283 0 0 0 0 284.476567h246.893281a129.517787 129.517787 0 0 0 39.317899-5.782044A238.220215 238.220215 0 0 1 404.743083 782.310559a240.533032 240.533032 0 0 1 21.971767-100.607566zM323.216262 592.08131a200.636928 200.636928 0 1 1 201.215133-200.636928 201.215133 201.215133 0 0 1-201.215133 200.636928z m0-343.453416a142.816488 142.816488 0 1 0 143.394692 142.816488A143.394692 143.394692 0 0 0 323.216262 248.627894z" fill="currentColor"></path><path d="M663.778656 818.737436m30.644834 0l213.935629 0q30.644833 0 30.644834 30.644834l0 4.625635q0 30.644833-30.644834 30.644834l-213.935629 0q-30.644833 0-30.644834-30.644834l0-4.625635q0-30.644833 30.644834-30.644834Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+                <div class="nav-item" onclick="location.href='my.html'">
+                    <svg class="nav-icon" viewBox="0 0 1024 1024" fill="currentColor">
+                        <path d="M948.736 658.944a20.48 20.48 0 0 0-15.872-16.0768L897.2288 634.88c-5.8368-10.24-12.5952-21.9136-16.5888-29.2864l11.264-35.328a20.48 20.48 0 0 0-5.9392-21.6064 193.1264 193.1264 0 0 0-64.4096-37.4784 20.48 20.48 0 0 0-21.9136 5.632L775.68 542.72a149.9136 149.9136 0 0 0-35.84 0L716.8 516.8128a20.48 20.48 0 0 0-21.9136-5.632 194.56 194.56 0 0 0-64.4096 37.4784 20.48 20.48 0 0 0-5.8368 21.6064L634.88 604.16a148.992 148.992 0 0 0-18.0224 31.3344l-34.304 7.4752a20.48 20.48 0 0 0-15.872 16.0768 196.7104 196.7104 0 0 0 0 74.752 20.48 20.48 0 0 0 15.872 16.0768l34.304 7.4752A151.6544 151.6544 0 0 0 634.88 788.48l-10.24 33.8944a20.48 20.48 0 0 0 5.9392 21.6064 194.56 194.56 0 0 0 64.4096 37.4784 20.48 20.48 0 0 0 21.8112-5.632L739.84 849.92a149.9136 149.9136 0 0 0 35.84 0L798.72 875.8272a20.48 20.48 0 0 0 15.2576 6.7584 21.0944 21.0944 0 0 0 6.656-1.1264 193.1264 193.1264 0 0 0 64.4096-37.4784 20.48 20.48 0 0 0 5.9392-21.6064L880.64 788.48a151.6544 151.6544 0 0 0 17.92-30.72l34.304-7.4752a20.48 20.48 0 0 0 15.872-16.0768 196.7104 196.7104 0 0 0 0-74.752z m-38.2976 53.8624l-31.3344 6.7584a20.48 20.48 0 0 0-15.1552 13.4144 111.104 111.104 0 0 1-21.7088 37.888 20.48 20.48 0 0 0-3.9936 19.6608l10.24 30.72a150.2208 150.2208 0 0 1-27.9552 16.384L798.72 813.9776a20.48 20.48 0 0 0-15.2576-6.7584 26.2144 26.2144 0 0 0-3.9936 0 106.9056 106.9056 0 0 1-43.4176 0 20.48 20.48 0 0 0-19.2512 6.4512l-21.4016 23.8592a150.2208 150.2208 0 0 1-27.9552-16.384l10.24-30.72a20.48 20.48 0 0 0-3.9936-19.6608 111.104 111.104 0 0 1-21.7088-37.888 20.48 20.48 0 0 0-15.1552-13.4144l-31.3344-6.7584A151.04 151.04 0 0 1 604.16 696.32a147.8656 147.8656 0 0 1 0.9216-16.384l31.3344-6.8608a20.48 20.48 0 0 0 15.1552-13.4144 111.104 111.104 0 0 1 21.7088-37.888 20.48 20.48 0 0 0 3.9936-19.7632l-10.24-30.72a150.2208 150.2208 0 0 1 27.9552-16.384L716.8 578.6624a20.48 20.48 0 0 0 19.2512 6.4512 110.6944 110.6944 0 0 1 43.4176 0 20.48 20.48 0 0 0 19.2512-6.4512l21.4016-23.8592a150.2208 150.2208 0 0 1 27.9552 16.384l-9.0112 28.2624a23.04 23.04 0 0 0 3.2768 23.04 444.1088 444.1088 0 0 1 22.528 39.424 20.48 20.48 0 0 0 14.2336 11.1616l31.3344 6.8608A147.8656 147.8656 0 0 1 911.36 696.32a151.04 151.04 0 0 1-0.9216 16.4864z" fill="currentColor"></path><path d="M762.5728 621.6704a78.848 78.848 0 1 0 78.336 78.7456 78.7456 78.7456 0 0 0-78.336-78.7456z m0 116.6336a37.888 37.888 0 1 1 37.376-37.888 37.6832 37.6832 0 0 1-37.376 37.888zM671.3344 291.7376a220.16 220.16 0 1 0-321.3312 195.2768A389.9392 389.9392 0 0 0 71.68 860.16a20.48 20.48 0 0 0 40.96 0 348.16 348.16 0 0 1 348.16-348.16 18.5344 18.5344 0 0 0 5.2224-0.8192 220.2624 220.2624 0 0 0 205.312-219.4432z m-399.36 0A179.2 179.2 0 1 1 451.1744 471.04a179.4048 179.4048 0 0 1-179.2-179.3024z" fill="currentColor"></path>
+                    </svg>
+                </div>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="toast-notification" id="toast"></div>
+    
+    <div class="loading-overlay" id="loadingMask">
+        <div class="pulse-ring"></div>
+    </div>
+
+    <script src="./spa/js/common.js"></script>
+    <script src="./spa/js/time-utils.js"></script>
+    <script src="./spa/js/device-session-manager.js"></script>
+    <script src="./spa/js/profit-detector.js"></script>
+    <script src="./spa/js/api.js"></script>
+    <script>
+        const productsContainer = document.getElementById('productsContainer');
+        const customerServiceBtn = document.getElementById('customerServiceBtn');
+        const loadingMask = document.getElementById('loadingMask');
+        let autoScroll = null;
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (!getToken()) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            setTimeout(async () => {
+                try {
+                    const isValid = await checkLoginOnPageLoad();
+                    if (!isValid) {
+                        return;
+                    }
+                } catch (error) {
+                }
+            }, 5000);
+            
+            initPage();
+            bindEventListeners();
+             
+            if (window.unifiedProfitManager) {
+                setTimeout(() => {
+                    window.unifiedProfitManager.smartProfitCheck('page_index');
+                }, 2000);
+            }
+        });
+        
+        function initPage() {
+            loadBanners();
+            loadUserBalance();
+            loadProducts();
+        }
+        
+         function bindEventListeners() {
+             const quickServiceBtn = document.getElementById('quickServiceBtn');
+             if (quickServiceBtn) {
+                 quickServiceBtn.addEventListener('click', function() {
+                     window.open('https://t.me/+kXcGVeS0X-M5YTk1', '_blank');
+                 });
+             }
+             
+             setTimeout(() => {
+                 showRulesModal();
+             }, 500);
+         }
+         
+         function showRulesModal() {
+             const modal = document.createElement('div');
+             modal.className = 'rules-modal';
+             modal.innerHTML = `
+                 <div class="rules-modal-overlay">
+                     <div class="rules-modal-content">
+                         <div class="rules-modal-body">
+                             <div class="rules-list">
+                                 <div class="rule-item">
+                                     <div class="rule-icon">💰</div>
+                                     <div class="rule-text">Inversión mínima $200</div>
+                                 </div>
+                                 <div class="rule-item">
+                                     <div class="rule-icon">💸</div>
+                                     <div class="rule-text">Retiro mínimo $100</div>
+                                 </div>
+                                <div class="rule-item">
+                                    <div class="rule-icon">🎁</div>
+                                    <div class="rule-text">Bonificación de registro $100</div>
+                                </div>
+                                 <div class="rule-item">
+                                     <div class="rule-icon">⏰</div>
+                                     <div class="rule-text">Los ingresos del producto se acreditan automáticamente cada día en el sistema</div>
+                                 </div>
+                             </div>
+                         </div>
+                         <div class="rules-modal-actions">
+                             <button class="rules-modal-btn" onclick="window.open('https://t.me/+kXcGVeS0X-M5YTk1', '_blank')">
+                                 Únete al grupo oficial
+                             </button>
+                             <button class="rules-modal-close">Cerrar</button>
+                         </div>
+                     </div>
+                 </div>
+             `;
+             
+             document.body.appendChild(modal);
+             
+             setTimeout(() => {
+                 modal.classList.add('show');
+             }, 10);
+             
+             const closeBtn = modal.querySelector('.rules-modal-close');
+             closeBtn.addEventListener('click', () => {
+                 modal.classList.remove('show');
+                 setTimeout(() => {
+                     document.body.removeChild(modal);
+                 }, 300);
+             });
+             
+             modal.querySelector('.rules-modal-overlay').addEventListener('click', (e) => {
+                 if (e.target === e.currentTarget) {
+                     modal.classList.remove('show');
+                     setTimeout(() => {
+                         document.body.removeChild(modal);
+                     }, 300);
+                 }
+             });
+         }
+        
+        async function loadProducts() {
+            try {
+                const products = await API.product.getList();
+                renderProducts(products);
+            } catch (error) {
+                productsContainer.innerHTML = '<div class="empty-state">No hay productos disponibles</div>';
+            }
+        }
+        
+        function renderProducts(products) {
+            try {
+                if (!products || !Array.isArray(products) || products.length === 0) {
+                    productsContainer.innerHTML = '<div class="empty-state">No hay productos disponibles</div>';
+                    return;
+                }
+                
+                productsContainer.innerHTML = products.map((product, index) => {
+                    const dailyProfit = parseFloat(product.daily_profit || 0);
+                    const period = parseInt(product.period || 0);
+                    const totalReturn = dailyProfit * period;
+                    const price = parseFloat(product.price || 0);
+                    const dailyRate = price > 0 ? ((dailyProfit / price) * 100).toFixed(2) : 0;
+                    
+                    return `
+                    <div class="product-card" data-idx="${index}">
+                        <div class="product-image">
+                            <img src="${product.image || './uploads/product/CAT.png'}" alt="${product.name || 'Producto'}">
+                            <div class="product-name-overlay">${product.name || 'Producto'}</div>
+                        </div>
+                        <div class="product-content">
+                            <div class="product-tags">
+                                <div class="info-tag price-tag">
+                                    <div class="tag-label">PRECIO</div>
+                                    <div class="tag-value">\$${formatMoney(price)}</div>
+                                </div>
+                                <div class="info-tag daily-tag">
+                                    <div class="tag-label">DIARIO</div>
+                                    <div class="tag-value">\$${formatMoney(dailyProfit)}</div>
+                                </div>
+                            </div>
+                            <div class="product-tags">
+                                <div class="info-tag days-tag">
+                                    <div class="tag-label">DÍAS</div>
+                                    <div class="tag-value">${period}</div>
+                                </div>
+                                <div class="info-tag total-tag">
+                                    <div class="tag-label">TOTAL</div>
+                                    <div class="tag-value">\$${formatMoney(totalReturn)}</div>
+                                </div>
+                            </div>
+                            <button class="invest-button" onclick="investProduct(${product.id || 0})">
+                                <svg viewBox="0 0 1024 1024" fill="currentColor">
+                                    <path d="M670.72 851.968c-15.36 0-29.696-8.192-37.888-21.504L419.84 490.496c-12.288-19.456-6.144-45.056 13.312-57.344s45.056-6.144 57.344 13.312l213.504 339.968c12.288 19.456 6.144 45.056-13.312 57.344C683.52 848.896 677.376 851.968 670.72 851.968z"></path>
+                                    <path d="M670.72 851.968c-6.656 0-12.8-1.536-18.944-5.632-19.456-12.288-25.6-37.888-13.312-57.344l213.504-339.968c12.288-19.456 37.888-25.6 57.344-13.312s25.6 37.888 13.312 57.344L709.12 830.464C700.928 843.776 686.08 851.968 670.72 851.968z"></path>
+                                </svg>
+                                <span>Invertir ahora</span>
+                            </button>
+                        </div>
+                    </div>
+                    `;
+                }).join('');
+                
+            } catch (error) {
+                productsContainer.innerHTML = '<div class="empty-state">No se pudo mostrar la lista de productos</div>';
+            }
+        }
+        
+        async function investProduct(productId) {
+            if (!getToken()) {
+                showToast('Inicia sesión primero', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
+                return;
+            }
+            
+            try {
+                showLoading();
+                
+                const config = await API.invest.getConfig();
+                const allowWithdrawBalance = config.allow_withdraw_balance_invest || false;
+                
+                const product = await API.product.getDetail(productId);
+                const amount = parseFloat(product.price) || 0;
+                
+                const balance = await API.user.getBalance();
+                const rechargeBalance = parseFloat(balance.recharge_balance) || 0;
+                const withdrawBalance = parseFloat(balance.withdraw_balance) || 0;
+                
+                let balanceType = 'recharge';
+                
+                if (allowWithdrawBalance) {
+                    balanceType = await showBalanceSelectionModal(amount, rechargeBalance, withdrawBalance);
+                    
+                    if (!balanceType) {
+                        hideLoading();
+                        return;
+                    }
+                }
+                
+                if (balanceType === 'recharge' && amount > rechargeBalance) {
+                    showToast('Saldo de recarga insuficiente', 'error');
+                    hideLoading();
+                    return;
+                }
+                
+                if (balanceType === 'withdraw' && amount > withdrawBalance) {
+                    showToast('Saldo de retiro insuficiente', 'error');
+                    hideLoading();
+                    return;
+                }
+                
+                await API.invest.create({
+                    product_id: productId,
+                    amount: amount,
+                    balance_type: balanceType
+                });
+
+                showToast('¡Inversión exitosa!', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'invest.html';
+                }, 1000);
+            } catch (error) {
+                showToast(error.message || 'La inversión falló; inténtalo de nuevo', 'error');
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        function showBalanceSelectionModal(amount, rechargeBalance, withdrawBalance) {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'balance-selection-modal';
+                modal.innerHTML = `
+                    <div class="balance-modal-overlay">
+                        <div class="balance-modal-content">
+                            <h3 class="balance-modal-title">Seleccionar método de pago</h3>
+                            <p class="balance-modal-amount">Monto de inversión: \$${formatMoney(amount)}</p>
+                            
+                            <div class="balance-options">
+                                <button class="balance-option ${rechargeBalance >= amount ? '' : 'disabled'}" 
+                                        data-type="recharge" 
+                                        ${rechargeBalance >= amount ? '' : 'disabled'}>
+                                    <span class="radio-indicator"></span>
+                                    <div class="option-header">
+                                        <div class="option-label">Saldo de recarga</div>
+                                    </div>
+                                    <div class="option-balance">\$${formatMoney(rechargeBalance)}</div>
+                                    ${rechargeBalance < amount ? '<div class="option-insufficient">Saldo insuficiente</div>' : ''}
+                                </button>
+                                
+                                <button class="balance-option ${withdrawBalance >= amount ? '' : 'disabled'}" 
+                                        data-type="withdraw" 
+                                        ${withdrawBalance >= amount ? '' : 'disabled'}>
+                                    <span class="radio-indicator"></span>
+                                    <div class="option-header">
+                                        <div class="option-label">Saldo de retiro</div>
+                                    </div>
+                                    <div class="option-balance">\$${formatMoney(withdrawBalance)}</div>
+                                    ${withdrawBalance < amount ? '<div class="option-insufficient">Saldo insuficiente</div>' : ''}
+                                </button>
+                            </div>
+                            
+                            <div class="balance-modal-actions">
+                                <button class="balance-modal-confirm" disabled>Confirmar inversión</button>
+                                <button class="balance-modal-cancel">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                let selectedType = null;
+                const confirmBtn = modal.querySelector('.balance-modal-confirm');
+                
+                modal.querySelectorAll('.balance-option:not(.disabled)').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        modal.querySelectorAll('.balance-option').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedType = btn.getAttribute('data-type');
+                        confirmBtn.disabled = false;
+                    });
+                });
+                
+                confirmBtn.addEventListener('click', () => {
+                    if (selectedType) {
+                        document.body.removeChild(modal);
+                        resolve(selectedType);
+                    }
+                });
+                
+                modal.querySelector('.balance-modal-cancel').addEventListener('click', () => {
+                    document.body.removeChild(modal);
+                    resolve(null);
+                });
+                
+                modal.querySelector('.balance-modal-overlay').addEventListener('click', (e) => {
+                    if (e.target === e.currentTarget) {
+                        document.body.removeChild(modal);
+                        resolve(null);
+                    }
+                });
+            });
+        }
+        
+        function showLoading() {
+            loadingMask.style.display = 'flex';
+        }
+        
+        function hideLoading() {
+            loadingMask.style.display = 'none';
+        }
+        
+        async function loadUserBalance() {
+            try {
+                const balance = await API.user.getBalance();
+                const rechargeBalance = parseFloat(balance.recharge_balance) || 0;
+                const balanceElements = document.querySelectorAll('#userBalance');
+                balanceElements.forEach(element => {
+                    if (element) {
+                        element.textContent = formatMoney(rechargeBalance);
+                    }
+                });
+            } catch (error) {
+            }
+        }
+        
+        async function loadBanners() {
+            try {
+                const response = await fetch('/api/system/banners', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + getToken()
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 1 && result.data && result.data.length > 0) {
+                    renderBanners(result.data);
+                } else {
+                    const bannerContainer = document.getElementById('bannerContainer');
+                    if (bannerContainer) {
+                        bannerContainer.innerHTML = `
+                        <div class="default-banner">
+                            <div class="banner-content">
+                                <h2 class="banner-title">Bienvenido a GSK Health</h2>
+                                <p class="banner-subtitle">Comienza tu viaje de inversión</p>
+                            </div>
+                        </div>
+                        `;
+                    }
+                }
+            } catch (error) {
+                const bannerContainer = document.getElementById('bannerContainer');
+                if (bannerContainer) {
+                    bannerContainer.innerHTML = `
+                        <div class="default-banner">
+                            <div class="banner-content">
+                                <h2 class="banner-title">Bienvenido a GSK Health</h2>
+                                <p class="banner-subtitle">Comienza tu viaje de inversión</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        function renderBanners(banners) {
+            const bannerContainer = document.getElementById('bannerContainer');
+            if (!bannerContainer) return;
+            
+                const bannersToShow = banners.slice(0, 3);
+            
+            bannerContainer.innerHTML = `
+                ${bannersToShow.map((banner, index) => `
+                    <div class="banner-slide ${index === 0 ? 'active' : ''}">
+                        <img src="${banner.image_url || banner.image}" alt="${banner.title || 'Anuncio'}" />
+                        <div class="banner-gradient"></div>
+                    </div>
+                `).join('')}
+                ${bannersToShow.length > 1 ? `
+                    <div class="banner-indicators">
+                        ${bannersToShow.map((_, index) => `
+                            <button class="indicator ${index === 0 ? 'active' : ''}" onclick="currentSlide(${index + 1})"></button>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+            
+            if (bannersToShow.length > 1) {
+                startBannerSlider();
+            }
+        }
+        
+        let currentBannerIndex = 0;
+        let bannerInterval;
+        
+        function startBannerSlider() {
+            bannerInterval = setInterval(() => {
+                nextSlide();
+            }, 5000);
+        }
+        
+        function nextSlide() {
+            const items = document.querySelectorAll('.banner-slide');
+            const indicators = document.querySelectorAll('.banner-indicators .indicator');
+            
+            if (items.length === 0) return;
+            
+            items[currentBannerIndex].classList.remove('active');
+            indicators[currentBannerIndex].classList.remove('active');
+            
+            currentBannerIndex = (currentBannerIndex + 1) % items.length;
+            
+            items[currentBannerIndex].classList.add('active');
+            indicators[currentBannerIndex].classList.add('active');
+        }
+        
+        function currentSlide(index) {
+            const items = document.querySelectorAll('.banner-slide');
+            const indicators = document.querySelectorAll('.banner-indicators .indicator');
+            
+            if (items.length === 0) return;
+            
+            items[currentBannerIndex].classList.remove('active');
+            indicators[currentBannerIndex].classList.remove('active');
+            
+            currentBannerIndex = index - 1;
+            
+            items[currentBannerIndex].classList.add('active');
+            indicators[currentBannerIndex].classList.add('active');
+            
+            clearInterval(bannerInterval);
+            startBannerSlider();
+        }
+        
+        function formatMoney(amount) {
+            const numAmount = parseFloat(amount);
+            if (isNaN(numAmount) || numAmount === null || numAmount === undefined) return '0';
+            return Math.floor(numAmount).toLocaleString('es-MX');
+        }
+    </script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js/v8c78df7c7c0f484497ecbca7046644da1771523124516" integrity="sha512-8DS7rgIrAmghBFwoOTujcf6D9rXvH8xm8JQ1Ja01h9QX8EzXldiszufYa4IFfKdLUKTTrnSFXLDkUEOTrZQ8Qg==" data-cf-beacon='{"version":"2024.11.0","token":"e6187b1a91964c3bb3bf3a006075c4f0","r":1,"server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+</body>
+</html>
